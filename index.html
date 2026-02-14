@@ -329,6 +329,8 @@
             display: flex;
             flex-direction: column;
             /* 垂直排列防止遮挡 */
+            gap: 4px;
+            /* 地图与图片之间的空隙 */
         }
 
         /* 地图容器 & 浮动按钮 */
@@ -944,7 +946,7 @@
             mapData.forEach(item => {
                 var map = L.map(item.id, {
                     zoomControl: false, dragging: false, scrollWheelZoom: false, attributionControl: false
-                }).setView([item.lat, item.lng], 14);
+                }).setView([item.lat, item.lng], 11);
                 L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(map);
                 L.marker([item.lat, item.lng]).addTo(map);
             });
