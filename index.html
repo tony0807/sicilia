@@ -32,6 +32,7 @@
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html { scroll-behavior: smooth; }
         a { text-decoration: none; color: inherit; }
 
         /* --- 浮雕按钮 --- */
@@ -68,12 +69,39 @@
             position: relative; width: 100%; height: 35vh; overflow: hidden; 
             background: #ccc; border-bottom: 5px solid var(--primary-dark);
         }
-        .header-poster { width: 100%; height: 100%; object-fit: cover; filter: sepia(0.2) contrast(1.1); display: block;}
+        /* 修复海报问题: 提升海报层级 */
+        .header-poster { 
+            width: 100%; height: 100%; object-fit: cover; 
+            filter: sepia(0.2) contrast(1.1); 
+            display: block;
+            position: relative; z-index: 2;
+        }
         
         .poster-placeholder {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             background: #dcd3c9; text-align: center; color: #888;
+            z-index: 1;
+        }
+
+        /* --- 日期快捷导航 --- */
+        .date-nav {
+            display: flex; justify-content: center; gap: 15px; 
+            padding: 20px 0 5px; margin: 0 auto; max-width: 600px;
+            flex-wrap: wrap;
+        }
+        .date-link {
+            font-family: 'Cinzel', serif; font-weight: bold; color: var(--primary-dark);
+            padding: 6px 12px; border-radius: 20px;
+            background: rgba(255,255,255,0.4);
+            border: 1px solid rgba(74, 59, 42, 0.2);
+            font-size: 14px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+        }
+        .date-link:hover, .date-link:active {
+            background: var(--primary-dark); color: #fff;
+            transform: translateY(-1px);
         }
 
         .header-title-box {
@@ -190,9 +218,18 @@
         </div>
     </div>
 
+    <!-- 快捷导航 -->
+    <div class="date-nav">
+        <a href="#day-2-19" class="date-link">2.19</a>
+        <a href="#day-2-20" class="date-link">2.20</a>
+        <a href="#day-2-21" class="date-link">2.21</a>
+        <a href="#day-2-22" class="date-link">2.22</a>
+        <a href="#day-2-23" class="date-link">2.23</a>
+    </div>
+
     <div class="timeline-container">
 
-        <div class="day-header">
+        <div class="day-header" id="day-2-19">
             <span class="day-num">2.19</span>
             <span style="font-size:12px; font-weight:bold; color:#777;">PALERMO</span>
         </div>
@@ -247,7 +284,7 @@
             </div>
         </div>
 
-        <div class="day-header">
+        <div class="day-header" id="day-2-20">
             <span class="day-num">2.20</span>
             <span style="font-size:12px; font-weight:bold; color:#777;">AGRIGENTO</span>
         </div>
@@ -299,7 +336,7 @@
             </div>
         </div>
 
-        <div class="day-header">
+        <div class="day-header" id="day-2-21">
             <span class="day-num">2.21</span>
             <span style="font-size:12px; font-weight:bold; color:#777;">SIRACUSA / NOTO</span>
         </div>
@@ -335,7 +372,7 @@
             </div>
         </div>
 
-        <div class="day-header">
+        <div class="day-header" id="day-2-22">
             <span class="day-num">2.22</span>
             <span style="font-size:12px; font-weight:bold; color:#777;">ETNA / CATANIA</span>
         </div>
@@ -372,7 +409,7 @@
             </div>
         </div>
 
-        <div class="day-header">
+        <div class="day-header" id="day-2-23">
             <span class="day-num">2.23</span>
             <span style="font-size:12px; font-weight:bold; color:#777;">TAORMINA / DEPARTURE</span>
         </div>
