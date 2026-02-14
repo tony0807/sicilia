@@ -124,26 +124,26 @@
         }
 
         /* --- 海报区 --- */
+        /* --- 海报区 --- */
         .header-container {
             position: relative;
             width: 100%;
-            height: 45vh;
+            height: auto;
+            /* 高度自适应 */
+            min-height: 50vh;
+            /* 最小高度 */
             overflow: hidden;
-            background: var(--bg-color);
-            border-bottom: 5px solid var(--primary-dark);
+            background: var(--primary-dark);
+            border-bottom: none;
         }
 
-        /* 修复海报问题: 使用 contain 完整显示图片，不裁剪 */
-        /* 修复海报问题: 使用 contain 完整显示图片，不裁剪 */
         .header-poster {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
+            height: auto;
             display: block;
             position: relative;
-            z-index: 2;
-            background-color: rgba(0, 0, 0, 0.03);
-            /* 轻微背景区分 */
+            z-index: 1;
+            /* 移除 object-fit: cover 以防裁剪，让图片自然撑开容器 */
         }
 
         .poster-placeholder {
@@ -208,30 +208,27 @@
 
         .header-title-box {
             position: absolute;
-            top: 65%;
-            /* 下移标题位置 */
+            bottom: 30px;
+            /* 沉底 */
             left: 50%;
-            transform: translate(-50%, -50%);
-            /* 居中 */
+            transform: translateX(-50%);
             pointer-events: none;
-            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.9);
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
             color: #fff;
             z-index: 5;
             text-align: center;
-            width: 90%;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            padding: 30px 10px;
-            background: rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(2px);
+            width: 100%;
+            /* 移除背景和模糊 */
         }
 
         .main-title {
             font-family: 'Cinzel', serif;
-            font-size: 42px;
-            /* 加大标题 */
+            font-size: 32px;
+            /* 缩小标题 */
             margin: 0;
             letter-spacing: 4px;
             font-weight: 800;
+            line-height: 1.1;
         }
 
         .sub-title {
@@ -523,8 +520,6 @@
         <div class="header-title-box">
             <h1 class="main-title">SOUTH OF ITALY</h1>
             <p class="sub-title">A Winter Journey Into The True Sicily</p>
-            <div style="width: 40px; height: 2px; background: #fff; margin: 15px auto;"></div>
-            <p style="font-size: 12px; opacity: 0.8; letter-spacing: 1px;">Feb 19 - 23 · 2026</p>
         </div>
     </div>
 
