@@ -132,10 +132,11 @@
         }
 
         /* 修复海报问题: 使用 contain 完整显示图片，不裁剪 */
+        /* 修复海报问题: 使用 contain 完整显示图片，不裁剪 */
         .header-poster {
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            object-fit: cover;
             display: block;
             position: relative;
             z-index: 2;
@@ -159,59 +160,73 @@
             z-index: 1;
         }
 
-        /* --- 日期快捷导航 --- */
-        .date-nav {
+        /* --- 日期快捷导航 (放入海报内) --- */
+        .header-nav-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 10;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));
+            padding: 40px 10px 15px;
             display: flex;
             justify-content: center;
-            gap: 15px;
-            padding: 20px 0 5px;
-            margin: 0 auto;
-            max-width: 600px;
+            align-items: center;
+            gap: 10px;
             flex-wrap: wrap;
         }
 
-        .date-link {
+        .header-nav-link {
             font-family: 'Cinzel', serif;
             font-weight: bold;
-            color: var(--primary-dark);
-            padding: 6px 12px;
-            border-radius: 20px;
-            background: rgba(255, 255, 255, 0.4);
-            border: 1px solid rgba(74, 59, 42, 0.2);
-            font-size: 14px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(2px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            font-size: 13px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
             transition: all 0.2s ease;
+            cursor: pointer;
         }
 
-        .date-link:hover,
-        .date-link:active {
-            background: var(--primary-dark);
-            color: #fff;
-            transform: translateY(-1px);
+        .header-nav-link:hover,
+        .header-nav-link:active {
+            background: #fff;
+            color: var(--primary-dark);
         }
 
         .header-title-box {
             position: absolute;
-            bottom: 15px;
-            left: 15px;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            /* 居中 */
             pointer-events: none;
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
             color: #fff;
             z-index: 5;
+            text-align: center;
+            width: 100%;
         }
 
         .main-title {
             font-family: 'Cinzel', serif;
-            font-size: 28px;
+            font-size: 42px;
+            /* 加大标题 */
             margin: 0;
-            letter-spacing: 2px;
+            letter-spacing: 4px;
+            font-weight: 800;
         }
 
         .sub-title {
-            font-size: 12px;
-            opacity: 0.9;
-            margin-top: 5px;
+            font-size: 14px;
+            opacity: 0.95;
+            margin-top: 8px;
             font-weight: normal;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
 
         /* --- 时间轴 --- */
@@ -445,21 +460,23 @@
         <div class="poster-placeholder">
             <span>封面图待上传<br>(命名为 poster.png)</span>
         </div>
+
+        <!-- 居中标题 -->
         <div class="header-title-box">
             <h1 class="main-title">SICILIA</h1>
             <p class="sub-title">2.19 - 2.23 Winter Road Trip</p>
         </div>
-    </div>
 
-    <!-- 快捷导航 -->
-    <div class="date-nav">
-        <button onclick="toggleModal()" class="date-link"
-            style="border: 1px solid var(--accent-color); color: var(--accent-color);">📅 行程总览</button>
-        <a href="#day-2-19" class="date-link">2.19</a>
-        <a href="#day-2-20" class="date-link">2.20</a>
-        <a href="#day-2-21" class="date-link">2.21</a>
-        <a href="#day-2-22" class="date-link">2.22</a>
-        <a href="#day-2-23" class="date-link">2.23</a>
+        <!-- 底部导航条 (放入海报内) -->
+        <div class="header-nav-bar">
+            <button onclick="toggleModal()" class="header-nav-link"
+                style="border: 1px solid rgba(255,255,255,0.6); background: rgba(255,255,255,0.15);">📅 行程总览</button>
+            <a href="#day-2-19" class="header-nav-link">2.19</a>
+            <a href="#day-2-20" class="header-nav-link">2.20</a>
+            <a href="#day-2-21" class="header-nav-link">2.21</a>
+            <a href="#day-2-22" class="header-nav-link">2.22</a>
+            <a href="#day-2-23" class="header-nav-link">2.23</a>
+        </div>
     </div>
 
     <div class="timeline-container">
