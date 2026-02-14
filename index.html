@@ -440,7 +440,6 @@
     </div>
 
     <div class="header-container">
-        <button class="overview-btn" onclick="toggleModal()">🗺️ 总览</button>
         <img src="poster.png" alt="海报" class="header-poster" onerror="this.style.display='none'">
         <div class="poster-placeholder">
             <span>封面图待上传<br>(命名为 poster.png)</span>
@@ -453,6 +452,8 @@
 
     <!-- 快捷导航 -->
     <div class="date-nav">
+        <button onclick="toggleModal()" class="date-link"
+            style="border: 1px solid var(--accent-color); color: var(--accent-color);">📅 行程总览</button>
         <a href="#day-2-19" class="date-link">2.19</a>
         <a href="#day-2-20" class="date-link">2.20</a>
         <a href="#day-2-21" class="date-link">2.21</a>
