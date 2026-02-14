@@ -439,6 +439,17 @@
             line-height: 1.5;
         }
     </style>
+    <script>
+        function toggleModal() {
+            const modal = document.getElementById('overviewModal');
+            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        function showHighlights() {
+            const modal = document.getElementById('highlightsModal');
+            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+        }
+    </script>
 </head>
 
 <body>
@@ -472,6 +483,22 @@
         </div>
     </div>
 
+    <!-- Highlights Modal -->
+    <div id="highlightsModal" class="modal-overlay" onclick="showHighlights()">
+        <div class="modal-content" onclick="event.stopPropagation()" style="text-align:center; padding: 40px 20px;">
+            <h3 style="margin-top:0; color:var(--accent-color); font-family:'Cinzel',serif; font-size: 24px;">Highlights
+            </h3>
+            <p style="font-size: 16px; line-height: 1.8; color: #555; margin: 20px 0;">
+                ✨ <b>行程主打</b> ✨<br><br>
+                美景 + 美食 (海鲜) 🦞<br>
+                自驾全岛主要景点 🚗<br>
+                冷不丁打卡电影取景地 🎬
+            </p>
+            <div style="margin-top:30px; cursor:pointer; color:var(--primary-dark); font-weight:bold; border: 1px solid #ccc; padding: 8px 20px; display:inline-block; border-radius: 20px;"
+                onclick="showHighlights()">OK</div>
+        </div>
+    </div>
+
     <div class="header-container">
         <img src="poster.png" alt="海报" class="header-poster" onerror="this.style.display='none'">
         <div class="poster-placeholder">
@@ -489,7 +516,9 @@
 
     <!-- 底部导航条 (吸顶) -->
     <div class="header-nav-bar">
-        <button onclick="toggleModal()" class="header-nav-link active-btn">📅 行程总览</button>
+        <button onclick="toggleModal()" class="header-nav-link active-btn">📅 总览</button>
+        <button onclick="showHighlights()" class="header-nav-link"
+            style="color: var(--accent-color); border-color: var(--accent-color);">✨ 主打</button>
         <a href="#day-2-19" class="header-nav-link">2.19</a>
         <a href="#day-2-20" class="header-nav-link">2.20</a>
         <a href="#day-2-21" class="header-nav-link">2.21</a>
@@ -872,11 +901,6 @@
     </div>
 
     <script>
-        function toggleModal() {
-            const modal = document.getElementById('overviewModal');
-            modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex';
-        }
-
         const mapData = [
             // Day 1
             { id: 'map-1-1', lat: 38.176, lng: 13.091 }, // 机场
