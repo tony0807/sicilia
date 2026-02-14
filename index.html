@@ -46,6 +46,8 @@
 
         html {
             scroll-behavior: smooth;
+            scroll-padding-top: 70px;
+            /* 修正锚点跳转被顶部导航遮挡的问题 */
         }
 
         a {
@@ -160,20 +162,27 @@
             z-index: 1;
         }
 
-        /* --- 日期快捷导航 (放入海报内) --- */
+        /* --- 顶部吸附导航栏 --- */
         .header-nav-bar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            z-index: 10;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));
-            padding: 40px 10px 15px;
+            position: -webkit-sticky;
+            /* Safari 兼容 */
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            /* 确保在最上层 */
+            background: rgba(255, 253, 249, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 12px 0;
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 10px;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
+            /* 不换行，横向滚动 */
+            overflow-x: auto;
+            border-bottom: 1px solid rgba(74, 59, 42, 0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 0px;
         }
 
         .header-nav-link {
@@ -199,16 +208,21 @@
 
         .header-title-box {
             position: absolute;
-            top: 40%;
+            top: 65%;
+            /* 下移标题位置 */
             left: 50%;
             transform: translate(-50%, -50%);
             /* 居中 */
             pointer-events: none;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.9);
             color: #fff;
             z-index: 5;
             text-align: center;
-            width: 100%;
+            width: 90%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 30px 10px;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(2px);
         }
 
         .main-title {
