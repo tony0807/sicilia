@@ -1,187 +1,419 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>西西里 · 冬季自驾 (全行程)</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Noto+Serif+SC:wght@500;700&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-    
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Noto+Serif+SC:wght@500;700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
     <style>
         /* --- 基础风格设置 --- */
         :root {
-            --bg-color: #e6dccd;      /* 暖色羊皮纸底色 */
-            --card-bg: #fdfbf7;       /* 卡片亮色 */
-            --primary-dark: #4a3b2a;  /* 深咖啡色文字 */
-            --accent-color: #8B4513;  /* 陶土红强调色 */
+            --bg-color: #e6dccd;
+            /* 暖色羊皮纸底色 */
+            --card-bg: #fdfbf7;
+            /* 卡片亮色 */
+            --primary-dark: #4a3b2a;
+            /* 深咖啡色文字 */
+            --accent-color: #8B4513;
+            /* 陶土红强调色 */
             --relief-light: rgba(255, 255, 255, 0.8);
             --relief-shadow: rgba(60, 50, 40, 0.2);
         }
 
-        body { 
-            margin: 0; 
-            font-family: 'Noto Serif SC', serif; 
-            background-color: var(--bg-color); 
+        body {
+            margin: 0;
+            font-family: 'Noto Serif SC', serif;
+            background-color: var(--bg-color);
             color: var(--primary-dark);
             line-height: 1.6;
-            background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.02) 0px, rgba(0,0,0,0.02) 2px, transparent 2px, transparent 4px);
+            background-image: repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.02) 0px, rgba(0, 0, 0, 0.02) 2px, transparent 2px, transparent 4px);
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        html { scroll-behavior: smooth; }
-        a { text-decoration: none; color: inherit; }
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
 
         /* --- 浮雕按钮 --- */
         .overview-btn {
-            position: absolute; top: 20px; right: 20px;
+            position: absolute;
+            top: 20px;
+            right: 20px;
             background: var(--bg-color);
             color: var(--primary-dark);
-            padding: 8px 15px; border-radius: 8px; border: none;
-            font-size: 13px; font-weight: bold; font-family: 'Noto Serif SC', serif;
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: none;
+            font-size: 13px;
+            font-weight: bold;
+            font-family: 'Noto Serif SC', serif;
             box-shadow: -2px -2px 5px var(--relief-light), 3px 3px 5px var(--relief-shadow);
-            z-index: 20; cursor: pointer;
+            z-index: 20;
+            cursor: pointer;
         }
-        .overview-btn:active { box-shadow: inset 2px 2px 5px var(--relief-shadow), inset -2px -2px 5px var(--relief-light); }
+
+        .overview-btn:active {
+            box-shadow: inset 2px 2px 5px var(--relief-shadow), inset -2px -2px 5px var(--relief-light);
+        }
 
         /* --- 模态框 --- */
         .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(44, 36, 27, 0.95); backdrop-filter: blur(4px);
-            z-index: 2000; display: none;
-            justify-content: center; align-items: center; padding: 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(44, 36, 27, 0.95);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
+
         .modal-content {
-            background: var(--card-bg); width: 100%; max-width: 350px; max-height: 80vh; overflow-y: auto;
-            padding: 25px; border-radius: 4px;
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 350px;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 25px;
+            border-radius: 4px;
             border: 1px solid var(--accent-color);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
         }
-        .overview-item { margin-bottom: 15px; border-left: 3px solid var(--accent-color); padding-left: 10px; }
-        .overview-date { font-weight: bold; display: block; font-size: 14px; color: var(--accent-color); }
-        .overview-text { font-size: 13px; color: #555; }
+
+        .overview-item {
+            margin-bottom: 15px;
+            border-left: 3px solid var(--accent-color);
+            padding-left: 10px;
+        }
+
+        .overview-date {
+            font-weight: bold;
+            display: block;
+            font-size: 14px;
+            color: var(--accent-color);
+        }
+
+        .overview-text {
+            font-size: 13px;
+            color: #555;
+        }
 
         /* --- 海报区 --- */
-        .header-container { 
-            position: relative; width: 100%; height: 35vh; overflow: hidden; 
-            background: #ccc; border-bottom: 5px solid var(--primary-dark);
+        .header-container {
+            position: relative;
+            width: 100%;
+            height: 35vh;
+            overflow: hidden;
+            background: #ccc;
+            border-bottom: 5px solid var(--primary-dark);
         }
+
         /* 修复海报问题: 提升海报层级 */
-        .header-poster { 
-            width: 100%; height: 100%; object-fit: cover; 
-            filter: sepia(0.2) contrast(1.1); 
+        .header-poster {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: sepia(0.2) contrast(1.1);
             display: block;
-            position: relative; z-index: 2;
+            position: relative;
+            z-index: 2;
         }
-        
+
         .poster-placeholder {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background: #dcd3c9; text-align: center; color: #888;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #dcd3c9;
+            text-align: center;
+            color: #888;
             z-index: 1;
         }
 
         /* --- 日期快捷导航 --- */
         .date-nav {
-            display: flex; justify-content: center; gap: 15px; 
-            padding: 20px 0 5px; margin: 0 auto; max-width: 600px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            padding: 20px 0 5px;
+            margin: 0 auto;
+            max-width: 600px;
             flex-wrap: wrap;
         }
+
         .date-link {
-            font-family: 'Cinzel', serif; font-weight: bold; color: var(--primary-dark);
-            padding: 6px 12px; border-radius: 20px;
-            background: rgba(255,255,255,0.4);
+            font-family: 'Cinzel', serif;
+            font-weight: bold;
+            color: var(--primary-dark);
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.4);
             border: 1px solid rgba(74, 59, 42, 0.2);
             font-size: 14px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
             transition: all 0.2s ease;
         }
-        .date-link:hover, .date-link:active {
-            background: var(--primary-dark); color: #fff;
+
+        .date-link:hover,
+        .date-link:active {
+            background: var(--primary-dark);
+            color: #fff;
             transform: translateY(-1px);
         }
 
         .header-title-box {
-            position: absolute; bottom: 15px; left: 15px; pointer-events: none;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.8); color: #fff; z-index: 5;
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            pointer-events: none;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+            color: #fff;
+            z-index: 5;
         }
-        .main-title { font-family: 'Cinzel', serif; font-size: 28px; margin: 0; letter-spacing: 2px; }
-        .sub-title { font-size: 12px; opacity: 0.9; margin-top: 5px; font-weight: normal; }
+
+        .main-title {
+            font-family: 'Cinzel', serif;
+            font-size: 28px;
+            margin: 0;
+            letter-spacing: 2px;
+        }
+
+        .sub-title {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-top: 5px;
+            font-weight: normal;
+        }
 
         /* --- 时间轴 --- */
-        .timeline-container { padding: 30px 15px 60px; max-width: 600px; margin: 0 auto; }
-        
-        .day-header { 
-            position: sticky; top: 0; z-index: 100;
-            background: var(--bg-color);
-            padding: 15px 0 10px; margin-bottom: 30px;
-            border-bottom: 3px solid var(--primary-dark);
-            box-shadow: 0 5px 10px -5px rgba(0,0,0,0.1);
-            display: flex; justify-content: space-between; align-items: baseline;
+        .timeline-container {
+            padding: 30px 15px 60px;
+            max-width: 600px;
+            margin: 0 auto;
         }
-        .day-num { font-family: 'Cinzel', serif; font-size: 24px; font-weight: 800; color: var(--primary-dark); }
-        
-        .timeline-item { position: relative; padding-left: 15px; margin-bottom: 40px; border-left: 2px dashed rgba(74, 59, 42, 0.3); }
-        .timeline-item:last-child { border-left: none; }
+
+        .day-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--bg-color);
+            padding: 15px 0 10px;
+            margin-bottom: 30px;
+            border-bottom: 3px solid var(--primary-dark);
+            box-shadow: 0 5px 10px -5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+
+        .day-num {
+            font-family: 'Cinzel', serif;
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary-dark);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 15px;
+            margin-bottom: 40px;
+            border-left: 2px dashed rgba(74, 59, 42, 0.3);
+        }
+
+        .timeline-item:last-child {
+            border-left: none;
+        }
+
         .timeline-item::before {
-            content: ''; position: absolute; left: -6px; top: 6px;
-            width: 10px; height: 10px; background: var(--accent-color);
-            border-radius: 50%; border: 2px solid var(--bg-color);
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 6px;
+            width: 10px;
+            height: 10px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            border: 2px solid var(--bg-color);
         }
 
         /* --- 卡片内容 --- */
-        .info-header { margin-bottom: 8px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .time-badge { background: var(--primary-dark); color: #fff; font-size: 12px; padding: 2px 6px; border-radius: 2px; }
-        .location-name { font-size: 17px; font-weight: 800; line-height: 1.2; }
+        .info-header {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
 
-        .card { 
-            background: var(--card-bg); border-radius: 6px; overflow: hidden; 
-            box-shadow: 0 4px 8px rgba(0,0,0,0.08); 
-            border: 1px solid rgba(0,0,0,0.05);
+        .time-badge {
+            background: var(--primary-dark);
+            color: #fff;
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 2px;
+        }
+
+        .location-name {
+            font-size: 17px;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         /* 地图容器 & 浮动按钮 */
-        .map-section { position: relative; height: 120px; width: 100%; z-index: 1; }
-        .map-container { height: 100%; width: 100%; }
-        
+        .map-section {
+            position: relative;
+            height: 120px;
+            width: 100%;
+            z-index: 1;
+        }
+
+        .map-container {
+            height: 100%;
+            width: 100%;
+        }
+
         .nav-btn-float {
-            position: absolute; bottom: 10px; right: 10px; z-index: 999;
-            background: #fff; color: #1a73e8; border: 1px solid #ccc;
-            padding: 5px 10px; border-radius: 20px; font-size: 11px; font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-            display: flex; align-items: center; gap: 4px;
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            z-index: 999;
+            background: #fff;
+            color: #1a73e8;
+            border: 1px solid #ccc;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
         /* 图片容器 (带占位符) */
-        .photo-wrapper { height: 180px; width: 100%; border-top: 1px solid #eee; position: relative; background: #eee; }
-        .photo-wrapper img { width: 100%; height: 100%; object-fit: cover; display: block; position: absolute; top:0; left:0; z-index: 2;}
+        .photo-wrapper {
+            height: 180px;
+            width: 100%;
+            border-top: 1px solid #eee;
+            position: relative;
+            background: #eee;
+        }
+
+        .photo-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 2;
+        }
+
         .img-placeholder {
-            position: absolute; top:0; left:0; width:100%; height:100%; z-index: 1;
-            display: flex; align-items: center; justify-content: center;
-            color: #999; font-size: 12px; font-style: italic;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 12px;
+            font-style: italic;
         }
 
         /* 备注 (默认展开) */
-        .remark-box { padding: 0 15px; background: #fffdf9; border-top: 1px solid #eee; }
-        details { transition: all 0.3s ease; }
-        details summary { 
-            padding: 12px 0; font-size: 12px; font-weight: bold; color: var(--accent-color); 
-            cursor: pointer; list-style: none; outline: none; display: flex; justify-content: space-between;
+        .remark-box {
+            padding: 0 15px;
+            background: #fffdf9;
+            border-top: 1px solid #eee;
         }
-        details summary::after { content: '▼'; font-size: 10px; transition: transform 0.2s; }
-        details[open] summary::after { transform: rotate(180deg); }
-        details summary::-webkit-details-marker { display: none; }
-        .remark-content { padding-bottom: 15px; font-size: 13px; color: #555; white-space: pre-wrap; line-height: 1.5; }
+
+        details {
+            transition: all 0.3s ease;
+        }
+
+        details summary {
+            padding: 12px 0;
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--accent-color);
+            cursor: pointer;
+            list-style: none;
+            outline: none;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        details summary::after {
+            content: '▼';
+            font-size: 10px;
+            transition: transform 0.2s;
+        }
+
+        details[open] summary::after {
+            transform: rotate(180deg);
+        }
+
+        details summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .remark-content {
+            padding-bottom: 15px;
+            font-size: 13px;
+            color: #555;
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
     </style>
 </head>
+
 <body>
 
     <div id="overviewModal" class="modal-overlay" onclick="toggleModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <h3 style="margin-top:0; color:var(--primary-dark); font-family:'Cinzel',serif; text-align:center;">Itinerary</h3>
+            <h3 style="margin-top:0; color:var(--primary-dark); font-family:'Cinzel',serif; text-align:center;">
+                Itinerary</h3>
             <div class="overview-item">
                 <span class="overview-date">2.19 (Day 1)</span>
                 <span class="overview-text">巴勒莫：四角广场 · 诺曼王宫 · 大教堂 · 马西莫剧院</span>
@@ -202,7 +434,8 @@
                 <span class="overview-date">2.23 (Day 5)</span>
                 <span class="overview-text">陶尔米纳希腊剧场 · 白莲花拍摄地 · 返程</span>
             </div>
-            <div style="text-align:center; margin-top:20px; cursor:pointer; color:var(--accent-color); font-weight:bold;" onclick="toggleModal()">[ 关闭 Close ]</div>
+            <div style="text-align:center; margin-top:20px; cursor:pointer; color:var(--accent-color); font-weight:bold;"
+                onclick="toggleModal()">[ 关闭 Close ]</div>
         </div>
     </div>
 
@@ -235,52 +468,91 @@
         </div>
 
         <div class="timeline-item">
-            <div class="info-header"><span class="time-badge">14:00</span><span class="location-name">巴勒莫机场取车</span></div>
+            <div class="info-header"><span class="time-badge">14:00</span><span class="location-name">巴勒莫机场取车</span>
+            </div>
             <div class="card">
-                <div class="map-section"><div id="map-1-1" class="map-container"></div><a href="https://www.google.com/maps/search/?api=1&query=Palermo+Airport" target="_blank" class="nav-btn-float">📍 导航</a></div>
+                <div class="map-section">
+                    <div id="map-1-1" class="map-container"></div><a
+                        href="https://www.google.com/maps/search/?api=1&query=Palermo+Airport" target="_blank"
+                        class="nav-btn-float">📍 导航</a>
+                </div>
             </div>
         </div>
 
         <div class="timeline-item">
             <div class="info-header"><span class="time-badge">下午</span><span class="location-name">四角广场</span></div>
             <div class="card">
-                <div class="map-section"><div id="map-1-2" class="map-container"></div><a href="https://www.google.com/maps/search/?api=1&query=Quattro+Canti+Palermo" target="_blank" class="nav-btn-float">📍 导航</a></div>
+                <div class="map-section">
+                    <div id="map-1-2" class="map-container"></div><a
+                        href="https://www.google.com/maps/search/?api=1&query=Quattro+Canti+Palermo" target="_blank"
+                        class="nav-btn-float">📍 导航</a>
+                </div>
                 <div class="photo-wrapper">
                     <div class="img-placeholder">待上传: quattro_canti.jpg</div>
                     <img src="quattro_canti.jpg" onerror="this.style.display='none'">
                 </div>
-                <div class="remark-box"><details open><summary>出行备注</summary><div class="remark-content">巴勒莫吃喝。</div></details></div>
-            </div>
-        </div>
-
-        <div class="timeline-item">
-            <div class="info-header"><span class="time-badge">过渡</span><span class="location-name">前往住宿 (Palazzo Scavone)</span></div>
-            <div class="card">
-                <div class="map-section"><div id="map-1-3" class="map-container"></div><a href="https://www.google.com/maps/search/?api=1&query=Palazzo+Scavone+Palermo" target="_blank" class="nav-btn-float">📍 导航</a></div>
-                <div class="remark-box"><details open><summary>重要提示</summary><div class="remark-content">因主城区有限行，且机场到别墅较远，建议中途在菜市场吃个牛肚包填填肚子，回别墅放好行李再出来逛。没逛完的可以放到明天上午。</div></details></div>
-            </div>
-        </div>
-
-        <div class="timeline-item">
-            <div class="info-header"><span class="time-badge">顺次</span><span class="location-name">诺曼王宫 & 大教堂</span></div>
-            <div class="card">
-                <div class="map-section"><div id="map-1-4" class="map-container"></div><a href="https://www.google.com/maps/search/?api=1&query=Palazzo+dei+Normanni" target="_blank" class="nav-btn-float">📍 导航</a></div>
-                <div class="photo-wrapper">
-                    <div class="img-placeholder">待上传: normanni.jpg</div>
-                    <img src="normanni.jpg" onerror="this.style.display='none'">
+                <div class="remark-box">
+                    <details open>
+                        <summary>出行备注</summary>
+                        <div class="remark-content">巴勒莫吃喝。</div>
+                    </details>
                 </div>
             </div>
         </div>
 
         <div class="timeline-item">
-            <div class="info-header"><span class="time-badge">晚间</span><span class="location-name">马西莫剧院 & 晚餐</span></div>
+            <div class="info-header"><span class="time-badge">过渡</span><span class="location-name">前往住宿 (Palazzo
+                    Scavone)</span></div>
             <div class="card">
-                <div class="map-section"><div id="map-1-5" class="map-container"></div><a href="https://www.google.com/maps/search/?api=1&query=Teatro+Massimo+Palermo" target="_blank" class="nav-btn-float">📍 导航</a></div>
+                <div class="map-section">
+                    <div id="map-1-3" class="map-container"></div><a
+                        href="https://www.google.com/maps/search/?api=1&query=Palazzo+Scavone+Palermo" target="_blank"
+                        class="nav-btn-float">📍 导航</a>
+                </div>
+                <div class="remark-box">
+                    <details open>
+                        <summary>重要提示</summary>
+                        <div class="remark-content">因主城区有限行，且机场到别墅较远，建议中途在菜市场吃个牛肚包填填肚子，回别墅放好行李再出来逛。没逛完的可以放到明天上午。</div>
+                    </details>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="info-header"><span class="time-badge">顺次</span><span class="location-name">诺曼王宫 & 大教堂</span>
+            </div>
+            <div class="card">
+                <div class="map-section">
+                    <div id="map-1-4" class="map-container"></div><a
+                        href="https://www.google.com/maps/search/?api=1&query=Palazzo+dei+Normanni" target="_blank"
+                        class="nav-btn-float">📍 导航</a>
+                </div>
+                <div class="photo-wrapper">
+                    <div class="img-placeholder">待上传: normanni.jpeg</div>
+                    <img src="normanni.jpeg" onerror="this.style.display='none'">
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="info-header"><span class="time-badge">晚间</span><span class="location-name">马西莫剧院 & 晚餐</span>
+            </div>
+            <div class="card">
+                <div class="map-section">
+                    <div id="map-1-5" class="map-container"></div><a
+                        href="https://www.google.com/maps/search/?api=1&query=Teatro+Massimo+Palermo" target="_blank"
+                        class="nav-btn-float">📍 导航</a>
+                </div>
                 <div class="photo-wrapper">
                     <div class="img-placeholder">待上传: teatro.jpg</div>
                     <img src="teatro.jpg" onerror="this.style.display='none'">
                 </div>
-                <div class="remark-box"><details open><summary>餐厅备选</summary><div class="remark-content">Osteria Ballarò，Osteria Nonna Dora，Il Cambusone</div></details></div>
+                <div class="remark-box">
+                    <details open>
+                        <summary>餐厅备选</summary>
+                        <div class="remark-content">Osteria Ballarò，Osteria Nonna Dora，Il Cambusone</div>
+                    </details>
+                </div>
             </div>
         </div>
 
@@ -290,21 +562,36 @@
         </div>
 
         <div class="timeline-item">
-            <div class="info-header"><span class="time-badge">08:30 - 11:30</span><span class="location-name">Ballarò 菜市场</span></div>
+            <div class="info-header"><span class="time-badge">08:30 - 11:30</span><span class="location-name">Ballarò
+                    菜市场</span></div>
             <div class="card">
-                <div class="map-section"><div id="map-2-1" class="map-container"></div><a href="https://www.google.com/maps/search/?api=1&query=Mercato+Ballaro" target="_blank" class="nav-btn-float">📍 导航</a></div>
+                <div class="map-section">
+                    <div id="map-2-1" class="map-container"></div><a
+                        href="https://www.google.com/maps/search/?api=1&query=Mercato+Ballaro" target="_blank"
+                        class="nav-btn-float">📍 导航</a>
+                </div>
                 <div class="photo-wrapper">
                     <div class="img-placeholder">待上传: ballaro.jpg</div>
                     <img src="ballaro.jpg" onerror="this.style.display='none'">
                 </div>
-                <div class="remark-box"><details open><summary>行程提示</summary><div class="remark-content">逛到11:30，吃完中饭出发前往阿格里真托 (约2.5小时车程)。</div></details></div>
+                <div class="remark-box">
+                    <details open>
+                        <summary>行程提示</summary>
+                        <div class="remark-content">逛到11:30，吃完中饭出发前往阿格里真托 (约2.5小时车程)。</div>
+                    </details>
+                </div>
             </div>
         </div>
 
         <div class="timeline-item">
-            <div class="info-header"><span class="time-badge">14:30 - 16:30</span><span class="location-name">土耳其阶梯</span></div>
+            <div class="info-header"><span class="time-badge">14:30 - 16:30</span><span
+                    class="location-name">土耳其阶梯</span></div>
             <div class="card">
-                <div class="map-section"><div id="map-2-2" class="map-container"></div><a href="https://www.google.com/maps/search/?api=1&query=Scala+dei+Turchi" target="_blank" class="nav-btn-float">📍 导航</a></div>
+                <div class="map-section">
+                    <div id="map-2-2" class="map-container"></div><a
+                        href="https://www.google.com/maps/search/?api=1&query=Scala+dei+Turchi" target="_blank"
+                        class="nav-btn-float">📍 导航</a>
+                </div>
                 <div class="photo-wrapper">
                     <div class="img-placeholder">待上传: scala.jpg</div>
                     <img src="scala.jpg" onerror="this.style.display='none'">
@@ -313,26 +600,47 @@
         </div>
 
         <div class="timeline-item">
-            <div class="info-header"><span class="time-badge">16:30 - 17:30</span><span class="location-name">神殿之谷</span></div>
+            <div class="info-header"><span class="time-badge">16:30 - 17:30</span><span
+                    class="location-name">神殿之谷</span></div>
             <div class="card">
-                <div class="map-section"><div id="map-2-3" class="map-container"></div><a href="https://www.google.com/maps/search/?api=1&query=Valle+dei+Templi" target="_blank" class="nav-btn-float">📍 导航</a></div>
+                <div class="map-section">
+                    <div id="map-2-3" class="map-container"></div><a
+                        href="https://www.google.com/maps/search/?api=1&query=Valle+dei+Templi" target="_blank"
+                        class="nav-btn-float">📍 导航</a>
+                </div>
                 <div class="photo-wrapper">
                     <div class="img-placeholder">待上传: valle.jpg</div>
                     <img src="valle.jpg" onerror="this.style.display='none'">
                 </div>
-                <div class="remark-box"><details open><summary>游玩贴士</summary><div class="remark-content">蓝调时光落日，非常美。预计游览2.5小时。之后驾车2.5小时前往锡拉库扎。</div></details></div>
+                <div class="remark-box">
+                    <details open>
+                        <summary>游玩贴士</summary>
+                        <div class="remark-content">蓝调时光落日，非常美。预计游览2.5小时。之后驾车2.5小时前往锡拉库扎。</div>
+                    </details>
+                </div>
             </div>
         </div>
 
         <div class="timeline-item">
-            <div class="info-header"><span class="time-badge">20:00 - 22:00</span><span class="location-name">锡拉库扎晚餐</span></div>
+            <div class="info-header"><span class="time-badge">20:00 - 22:00</span><span
+                    class="location-name">锡拉库扎晚餐</span></div>
             <div class="card">
-                <div class="map-section"><div id="map-2-4" class="map-container"></div><a href="https://www.google.com/maps/search/?api=1&query=La+Tavernetta+Uno+da+Simone+Siracusa" target="_blank" class="nav-btn-float">📍 导航</a></div>
-                <div class="photo-wrapper">
-                    <div class="img-placeholder">待上传: syracuse_dinner.jpg</div>
-                    <img src="syracuse_dinner.jpg" onerror="this.style.display='none'">
+                <div class="map-section">
+                    <div id="map-2-4" class="map-container"></div><a
+                        href="https://www.google.com/maps/search/?api=1&query=La+Tavernetta+Uno+da+Simone+Siracusa"
+                        target="_blank" class="nav-btn-float">📍 导航</a>
                 </div>
-                <div class="remark-box"><details open><summary>餐厅信息</summary><div class="remark-content">目标餐厅: La Tavernetta Uno da Simone。<br>注意：晚饭一般7点才开始。如果逛得太晚，可在阿格里真托吃完再走。</div></details></div>
+                <div class="photo-wrapper">
+                    <div class="img-placeholder">待上传: dinner_siracusa.jpg</div>
+                    <img src="dinner_siracusa.jpg" onerror="this.style.display='none'">
+                </div>
+                <div class="remark-box">
+                    <details open>
+                        <summary>餐厅信息</summary>
+                        <div class="remark-content">目标餐厅: La Tavernetta Uno da
+                            Simone。<br>注意：晚饭一般7点才开始。如果逛得太晚，可在阿格里真托吃完再走。</div>
+                    </details>
+                </div>
             </div>
         </div>
 
@@ -342,33 +650,58 @@
         </div>
 
         <div class="timeline-item">
-            <div class="info-header"><span class="time-badge">08:30 - 13:30</span><span class="location-name">锡拉库扎游玩</span></div>
+            <div class="info-header"><span class="time-badge">08:30 - 13:30</span><span
+                    class="location-name">锡拉库扎游玩</span></div>
             <div class="card">
-                <div class="map-section"><div id="map-3-1" class="map-container"></div><a href="https://www.google.com/maps/search/?api=1&query=Palermo+Cathedral6" target="_blank" class="nav-btn-float">📍 导航</a></div>
+                <div class="map-section">
+                    <div id="map-3-1" class="map-container"></div><a
+                        href="https://www.google.com/maps/search/?api=1&query=Palermo+Cathedral6" target="_blank"
+                        class="nav-btn-float">📍 导航</a>
+                </div>
                 <div class="photo-wrapper">
                     <div class="img-placeholder">待上传: ortigia.jpg</div>
                     <img src="ortigia.jpg" onerror="this.style.display='none'">
                 </div>
-                <div class="remark-box"><details open><summary>游玩重点</summary><div class="remark-content">西西里的美丽传说取景地。午餐备选: ‘a Putia delle cose buone</div></details></div>
-            </div>
-        </div>
-
-        <div class="timeline-item">
-            <div class="info-header"><span class="time-badge">下午</span><span class="location-name">诺托 · 圣尼各老主教座堂</span></div>
-            <div class="card">
-                <div class="map-section"><div id="map-3-2" class="map-container"></div><a href="https://www.google.com/maps/search/?api=1&query=Palermo+Cathedral7" target="_blank" class="nav-btn-float">📍 导航</a></div>
-                <div class="photo-wrapper">
-                    <div class="img-placeholder">待上传: noto_cathedral.jpg</div>
-                    <img src="noto_cathedral.jpg" onerror="this.style.display='none'">
+                <div class="remark-box">
+                    <details open>
+                        <summary>游玩重点</summary>
+                        <div class="remark-content">西西里的美丽传说取景地。午餐备选: ‘a Putia delle cose buone</div>
+                    </details>
                 </div>
-                <div class="remark-box"><details open><summary>出行备注</summary><div class="remark-content">车程40分钟。建议在诺托吃完晚饭再回来。<br>晚餐餐厅: Anche gli Angeli (19:00)。</div></details></div>
             </div>
         </div>
 
         <div class="timeline-item">
-            <div class="info-header"><span class="time-badge">22:00</span><span class="location-name">宿: Matteotti Luxury Residence</span></div>
+            <div class="info-header"><span class="time-badge">下午</span><span class="location-name">诺托 · 圣尼各老主教座堂</span>
+            </div>
             <div class="card">
-                <div class="map-section"><div id="map-3-3" class="map-container"></div><a href="https://www.google.com/maps/search/?api=1&query=Palermo+Cathedral8" target="_blank" class="nav-btn-float">📍 导航</a></div>
+                <div class="map-section">
+                    <div id="map-3-2" class="map-container"></div><a
+                        href="https://www.google.com/maps/search/?api=1&query=Palermo+Cathedral7" target="_blank"
+                        class="nav-btn-float">📍 导航</a>
+                </div>
+                <div class="photo-wrapper">
+                    <div class="img-placeholder">待上传: noto.jpg</div>
+                    <img src="noto.jpg" onerror="this.style.display='none'">
+                </div>
+                <div class="remark-box">
+                    <details open>
+                        <summary>出行备注</summary>
+                        <div class="remark-content">车程40分钟。建议在诺托吃完晚饭再回来。<br>晚餐餐厅: Anche gli Angeli (19:00)。</div>
+                    </details>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="info-header"><span class="time-badge">22:00</span><span class="location-name">宿: Matteotti
+                    Luxury Residence</span></div>
+            <div class="card">
+                <div class="map-section">
+                    <div id="map-3-3" class="map-container"></div><a
+                        href="https://www.google.com/maps/search/?api=1&query=Palermo+Cathedral8" target="_blank"
+                        class="nav-btn-float">📍 导航</a>
+                </div>
             </div>
         </div>
 
@@ -378,34 +711,64 @@
         </div>
 
         <div class="timeline-item">
-            <div class="info-header"><span class="time-badge">08:00 - 10:00</span><span class="location-name">前往埃特纳 (途经卡塔尼亚)</span></div>
+            <div class="info-header"><span class="time-badge">08:00 - 10:00</span><span class="location-name">前往埃特纳
+                    (途经卡塔尼亚)</span></div>
             <div class="card">
-                <div class="map-section"><div id="map-4-1" class="map-container"></div></div>
-                <div class="remark-box"><details open><summary>重要安排</summary><div class="remark-content">车程2小时。中途去卡塔尼亚吃早餐。如果运气好能买到上火山的票就趁早出发，否则在卡塔尼亚吃饱再上山。</div></details></div>
+                <div class="map-section">
+                    <div id="map-4-1" class="map-container"></div>
+                </div>
+                <div class="remark-box">
+                    <details open>
+                        <summary>重要安排</summary>
+                        <div class="remark-content">车程2小时。中途去卡塔尼亚吃早餐。如果运气好能买到上火山的票就趁早出发，否则在卡塔尼亚吃饱再上山。</div>
+                    </details>
+                </div>
             </div>
         </div>
 
         <div class="timeline-item">
-            <div class="info-header"><span class="time-badge">10:30 - 14:00</span><span class="location-name">埃特纳火山 (Mount Etna)</span></div>
+            <div class="info-header"><span class="time-badge">10:30 - 14:00</span><span class="location-name">埃特纳火山
+                    (Mount Etna)</span></div>
             <div class="card">
-                <div class="map-section"><div id="map-4-2" class="map-container"></div><a href="https://www.google.com/maps/search/?api=1&query=Palermo+Cathedral9" target="_blank" class="nav-btn-float">📍 导航</a></div>
+                <div class="map-section">
+                    <div id="map-4-2" class="map-container"></div><a
+                        href="https://www.google.com/maps/search/?api=1&query=Palermo+Cathedral9" target="_blank"
+                        class="nav-btn-float">📍 导航</a>
+                </div>
                 <div class="photo-wrapper">
                     <div class="img-placeholder">待上传: etna.jpg</div>
                     <img src="etna.jpg" onerror="this.style.display='none'">
                 </div>
-                <div class="remark-box"><details open><summary>登山攻略</summary><div class="remark-content">1. 官网: funiviaetna.com<br>2. 驾车至1900米 -> 缆车至2500米 (52欧/人) -> 4x4车继续向上 (需另购票)<br>3. 必须现场买票，需要穿厚衣服。<br>4. 如果当天不能上山，就下山去卡塔尼亚逛逛。</div></details></div>
+                <div class="remark-box">
+                    <details open>
+                        <summary>登山攻略</summary>
+                        <div class="remark-content">1. 官网: funiviaetna.com<br>2. 驾车至1900米 -> 缆车至2500米 (52欧/人) ->
+                            4x4车继续向上 (需另购票)<br>3. 必须现场买票，需要穿厚衣服。<br>4. 如果当天不能上山，就下山去卡塔尼亚逛逛。</div>
+                    </details>
+                </div>
             </div>
         </div>
 
         <div class="timeline-item">
-            <div class="info-header"><span class="time-badge">19:00</span><span class="location-name">卡塔尼亚晚餐</span></div>
+            <div class="info-header"><span class="time-badge">19:00</span><span class="location-name">卡塔尼亚晚餐</span>
+            </div>
             <div class="card">
-                <div class="map-section"><div id="map-4-3" class="map-container"></div><a href="https://www.google.com/maps/search/?api=1&query=Teatro+Massimo+Palermo0" target="_blank" class="nav-btn-float">📍 导航</a></div>
-                <div class="photo-wrapper">
-                    <div class="img-placeholder">待上传: catania_market.jpg</div>
-                    <img src="catania_market.jpg" onerror="this.style.display='none'">
+                <div class="map-section">
+                    <div id="map-4-3" class="map-container"></div><a
+                        href="https://www.google.com/maps/search/?api=1&query=Teatro+Massimo+Palermo0" target="_blank"
+                        class="nav-btn-float">📍 导航</a>
                 </div>
-                <div class="remark-box"><details open><summary>餐厅推荐</summary><div class="remark-content">Osteria Antica Marina 或 鱼市场附近。<br>天黑前下山，有充裕时间吃晚饭。之后前往陶尔米纳住宿 (Via Cagli Corrado, 15)。</div></details></div>
+                <div class="photo-wrapper">
+                    <div class="img-placeholder">待上传: catania.jpg</div>
+                    <img src="catania.jpg" onerror="this.style.display='none'">
+                </div>
+                <div class="remark-box">
+                    <details open>
+                        <summary>餐厅推荐</summary>
+                        <div class="remark-content">Osteria Antica Marina 或 鱼市场附近。<br>天黑前下山，有充裕时间吃晚饭。之后前往陶尔米纳住宿 (Via
+                            Cagli Corrado, 15)。</div>
+                    </details>
+                </div>
             </div>
         </div>
 
@@ -415,12 +778,17 @@
         </div>
 
         <div class="timeline-item">
-            <div class="info-header"><span class="time-badge">06:30 - 07:30</span><span class="location-name">陶尔米纳希腊剧场</span></div>
+            <div class="info-header"><span class="time-badge">06:30 - 07:30</span><span
+                    class="location-name">陶尔米纳希腊剧场</span></div>
             <div class="card">
-                <div class="map-section"><div id="map-5-1" class="map-container"></div><a href="https://www.google.com/maps/search/?api=1&query=Teatro+Massimo+Palermo1" target="_blank" class="nav-btn-float">📍 导航</a></div>
+                <div class="map-section">
+                    <div id="map-5-1" class="map-container"></div><a
+                        href="https://www.google.com/maps/search/?api=1&query=Teatro+Massimo+Palermo1" target="_blank"
+                        class="nav-btn-float">📍 导航</a>
+                </div>
                 <div class="photo-wrapper">
-                    <div class="img-placeholder">待上传: taormina_theater.jpg</div>
-                    <img src="taormina_theater.jpg" onerror="this.style.display='none'">
+                    <div class="img-placeholder">待上传: taormina.jpg</div>
+                    <img src="taormina.jpg" onerror="this.style.display='none'">
                 </div>
             </div>
         </div>
@@ -428,20 +796,39 @@
         <div class="timeline-item">
             <div class="info-header"><span class="time-badge">中午</span><span class="location-name">陶尔米纳午餐</span></div>
             <div class="card">
-                <div class="map-section"><div id="map-5-2" class="map-container"></div><a href="https://www.google.com/maps/search/?api=1&query=Teatro+Massimo+Palermo2" target="_blank" class="nav-btn-float">📍 导航</a></div>
-                <div class="photo-wrapper">
-                    <div class="img-placeholder">待上传: taormina_lunch.jpg</div>
-                    <img src="taormina_lunch.jpg" onerror="this.style.display='none'">
+                <div class="map-section">
+                    <div id="map-5-2" class="map-container"></div><a
+                        href="https://www.google.com/maps/search/?api=1&query=Teatro+Massimo+Palermo2" target="_blank"
+                        class="nav-btn-float">📍 导航</a>
                 </div>
-                <div class="remark-box"><details open><summary>相关信息</summary><div class="remark-content">餐厅: Osteria da Rita (dal 1991)<br>这里也是《白莲花度假村》拍摄地。</div></details></div>
+                <div class="photo-wrapper">
+                    <div class="img-placeholder">待上传: lunch.jpg</div>
+                    <img src="lunch.jpg" onerror="this.style.display='none'">
+                </div>
+                <div class="remark-box">
+                    <details open>
+                        <summary>相关信息</summary>
+                        <div class="remark-content">餐厅: Osteria da Rita (dal 1991)<br>这里也是《白莲花度假村》拍摄地。</div>
+                    </details>
+                </div>
             </div>
         </div>
 
         <div class="timeline-item">
-            <div class="info-header"><span class="time-badge">13:30 - 17:00</span><span class="location-name">前往机场</span></div>
+            <div class="info-header"><span class="time-badge">13:30 - 17:00</span><span
+                    class="location-name">前往机场</span></div>
             <div class="card">
-                <div class="map-section"><div id="map-5-3" class="map-container"></div><a href="https://www.google.com/maps/search/?api=1&query=Teatro+Massimo+Palermo3" target="_blank" class="nav-btn-float">📍 导航</a></div>
-                <div class="remark-box"><details open><summary>返程提示</summary><div class="remark-content">车程约3.5小时。请预留足够时间还车。</div></details></div>
+                <div class="map-section">
+                    <div id="map-5-3" class="map-container"></div><a
+                        href="https://www.google.com/maps/search/?api=1&query=Teatro+Massimo+Palermo3" target="_blank"
+                        class="nav-btn-float">📍 导航</a>
+                </div>
+                <div class="remark-box">
+                    <details open>
+                        <summary>返程提示</summary>
+                        <div class="remark-content">车程约3.5小时。请预留足够时间还车。</div>
+                    </details>
+                </div>
             </div>
         </div>
 
@@ -479,10 +866,10 @@
             { id: 'map-5-3', lat: 37.4673, lng: 15.0658 }  // 卡塔尼亚机场
         ];
 
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             mapData.forEach(item => {
                 var map = L.map(item.id, {
-                    zoomControl: false, dragging: false, scrollWheelZoom: false, attributionControl: false 
+                    zoomControl: false, dragging: false, scrollWheelZoom: false, attributionControl: false
                 }).setView([item.lat, item.lng], 14);
                 L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(map);
                 L.marker([item.lat, item.lng]).addTo(map);
@@ -490,4 +877,5 @@
         });
     </script>
 </body>
+
 </html>
