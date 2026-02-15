@@ -190,14 +190,14 @@
         .header-nav-link {
             font-family: 'Cinzel', serif;
             font-weight: bold;
-            color: #fff;
+            color: var(--primary-dark);
             padding: 5px 10px;
             border-radius: 15px;
             background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(2px);
             border: 1px solid rgba(255, 255, 255, 0.3);
             font-size: 13px;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            text-shadow: none;
             transition: all 0.2s ease;
             cursor: pointer;
         }
@@ -210,8 +210,8 @@
 
         .header-title-box {
             position: absolute;
-            bottom: 30px;
-            /* 沉底 */
+            bottom: 80px;
+            /* 上移到车轮位置 */
             left: 50%;
             transform: translateX(-50%);
             pointer-events: none;
@@ -464,6 +464,21 @@
             const modal = document.getElementById('highlightsModal');
             modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
         }
+
+        // Fix for date navigation - ensure anchor links work on repeated clicks
+        document.addEventListener('DOMContentLoaded', function () {
+            const dateLinks = document.querySelectorAll('.header-nav-bar a[href^="#"]');
+            dateLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+        });
     </script>
 </head>
 
@@ -529,9 +544,8 @@
 
     <!-- 底部导航条 (吸顶) -->
     <div class="header-nav-bar">
-        <button onclick="toggleModal()" class="header-nav-link active-btn">📅 总览</button>
-        <button onclick="showHighlights()" class="header-nav-link"
-            style="color: var(--accent-color); border-color: var(--accent-color);">✨ 主打</button>
+        <button onclick="toggleModal()" class="header-nav-link">📅 总览</button>
+        <button onclick="showHighlights()" class="header-nav-link">✨ 主打</button>
         <a href="#day-2-19" class="header-nav-link">2.19</a>
         <a href="#day-2-20" class="header-nav-link">2.20</a>
         <a href="#day-2-21" class="header-nav-link">2.21</a>
